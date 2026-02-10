@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Tax Admin - Municipal Services</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="admin-dashboard">
+    <header class="admin-header">
+        <nav class="admin-nav container">
+            <div class="logo">
+                <i class="fas fa-home"></i>
+                <span>Property Tax Admin</span>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('admin_dashboard') }}" class="btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Dashboard</span>
+                </a>
+                <a href="{{ url_for('admin_echallan') }}" class="btn">
+                    <i class="fas fa-car"></i>
+                    <span>EChallan</span>
+                </a>
+                <a href="{{ url_for('admin_logout') }}" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="admin-main container">
+        <div class="table-container fade-in">
+            <div class="table-header">
+                <h2>Property Tax Submissions</h2>
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="status">Status</label>
+                        <select id="property_tax-status" class="filter-select" onchange="filterTable()">
+                            <option value="all" {% if status == 'all' %}selected{% endif %}>All</option>
+                            <option value="pending" {% if status == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="completed" {% if status == 'completed' %}selected{% endif %}>Completed</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="date">Date</label>
+                        <input type="date" id="property_tax-date" class="filter-input" value="{{ date_filter }}" onchange="filterTable()">
+                    </div>
+                    
+                    <button class="btn btn-success export-btn" data-type="property_tax">
+                        <i class="fas fa-file-excel"></i>
+                        <span>Export Excel</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Amount Paid</th>
+                            <th>Status</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in records %}
+                        <tr>
+                            <td><strong>{{ record.unique_id }}</strong></td>
+                            <td>{{ record.name }}</td>
+                            <td>{{ record.phone }}</td>
+                            <td>{{ record.address }}</td>
+                            <td>
+                                {% if record.amount_paid %}
+                                    ₹{{ record.amount_paid }}
+                                {% else %}
+                                    <span style="color: var(--gray);">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="status-badge status-{{ record.status }}">
+                                    {{ record.status }}
+                                </span>
+                            </td>
+                            <td>{{ record.created_at }}</td>
+                            <td>
+                                {% if record.status == 'pending' %}
+                                <button class="btn btn-warning update-status-btn" 
+                                        data-id="{{ record.id }}"
+                                        data-type="property_tax"
+                                        data-status="{{ record.status }}">
+                                    <i class="fas fa-check"></i>
+                                    <span>Mark Completed</span>
+                                </button>
+                                {% else %}
+                                <span class="status-badge status-completed">
+                                    <i class="fas fa-check"></i>
+                                    Completed
+                                </span>
+                                {% if record.amount_paid %}
+                                <br><small>Paid: ₹{{ record.amount_paid }}</small>
+                                {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center" style="padding: 3rem; color: var(--gray);">
+                                <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                                <h3>No records found</h3>
+                                <p>No property tax submissions match your filters</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Status Update Modal -->
+    <div class="modal" id="statusUpdateModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Update Status</h3>
+            </div>
+            <form id="statusUpdateForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="amountPaid">
+                            <i class="fas fa-rupee-sign"></i>
+                            Amount Paid
+                        </label>
+                        <input type="number" id="amountPaid" class="form-control" placeholder="Enter amount paid" required min="0" step="0.01">
+                    </div>
+                    <p class="text-center" style="color: var(--gray); font-size: 0.9rem;">
+                        <i class="fas fa-info-circle"></i>
+                        Changing status to completed will notify the user
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" id="cancelStatusUpdate">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check"></i>
+                        Mark as Completed
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        function filterTable() {
+            const status = document.getElementById('property_tax-status').value;
+            const date = document.getElementById('property_tax-date').value;
+            window.location.href = `/admin/property-tax?status=${status}&date=${date}`;
+        }
+    </script>
+</body>
+</html>

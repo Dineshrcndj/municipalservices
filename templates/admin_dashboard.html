@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Municipal Services</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="admin-dashboard">
+    <header class="admin-header">
+        <nav class="admin-nav container">
+            <div class="logo">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Admin Dashboard</span>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('admin_dashboard') }}" class="btn">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('admin_property_tax') }}" class="btn">
+                    <i class="fas fa-home"></i>
+                    <span>Property Tax</span>
+                </a>
+                <a href="{{ url_for('admin_echallan') }}" class="btn">
+                    <i class="fas fa-car"></i>
+                    <span>EChallan</span>
+                </a>
+                <a href="{{ url_for('admin_logout') }}" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+            <button class="mobile-menu-btn d-none" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+    </header>
+
+    <main class="admin-main container">
+        <div class="welcome-message mb-3">
+            <h1>Welcome, Administrator</h1>
+            <p>Manage property tax and echallan submissions</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-home" style="color: #4361ee;"></i>
+                </div>
+                <div class="stat-value" id="property_tax-total">0</div>
+                <div class="stat-label">Property Tax Total</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-car" style="color: #7209b7;"></i>
+                </div>
+                <div class="stat-value" id="echallan-total">0</div>
+                <div class="stat-label">EChallan Total</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock" style="color: #f8961e;"></i>
+                </div>
+                <div class="stat-value" id="property_tax-pending">0</div>
+                <div class="stat-label">Property Tax Pending</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock" style="color: #f8961e;"></i>
+                </div>
+                <div class="stat-value" id="echallan-pending">0</div>
+                <div class="stat-label">EChallan Pending</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle" style="color: #4cc9f0;"></i>
+                </div>
+                <div class="stat-value" id="property_tax-completed">0</div>
+                <div class="stat-label">Property Tax Completed</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle" style="color: #4cc9f0;"></i>
+                </div>
+                <div class="stat-value" id="echallan-completed">0</div>
+                <div class="stat-label">EChallan Completed</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-rupee-sign" style="color: #2ecc71;"></i>
+                </div>
+                <div class="stat-value" id="property_tax-amount">₹0</div>
+                <div class="stat-label">Property Tax Amount</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-rupee-sign" style="color: #2ecc71;"></i>
+                </div>
+                <div class="stat-value" id="echallan-amount">₹0</div>
+                <div class="stat-label">EChallan Amount</div>
+            </div>
+        </div>
+        
+        <div class="filters mb-3">
+            <div class="filter-group">
+                <label for="property_tax-period">Property Tax Period</label>
+                <select id="property_tax-period" class="filter-select" data-type="property_tax">
+                    <option value="today">Today</option>
+                    <option value="this_month">This Month</option>
+                    <option value="last_month">Last Month</option>
+                    <option value="all">All Time</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="echallan-period">EChallan Period</label>
+                <select id="echallan-period" class="filter-select" data-type="echallan">
+                    <option value="today">Today</option>
+                    <option value="this_month">This Month</option>
+                    <option value="last_month">Last Month</option>
+                    <option value="all">All Time</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="service-cards">
+            <a href="{{ url_for('admin_property_tax') }}" class="service-card">
+                <i class="fas fa-home"></i>
+                <h3>Manage Property Tax</h3>
+                <p>View, update, and manage property tax submissions</p>
+                <div class="btn btn-primary mt-2">
+                    <span>Go to Property Tax</span>
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+            
+            <a href="{{ url_for('admin_echallan') }}" class="service-card">
+                <i class="fas fa-car"></i>
+                <h3>Manage EChallan</h3>
+                <p>View, update, and manage echallan submissions</p>
+                <div class="btn btn-primary mt-2">
+                    <span>Go to EChallan</span>
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <!-- Status Update Modal -->
+    <div class="modal" id="statusUpdateModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Update Status</h3>
+            </div>
+            <form id="statusUpdateForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="amountPaid">
+                            <i class="fas fa-rupee-sign"></i>
+                            Amount Paid
+                        </label>
+                        <input type="number" id="amountPaid" class="form-control" placeholder="Enter amount paid" required min="0" step="0.01">
+                    </div>
+                    <p class="text-center" style="color: var(--gray); font-size: 0.9rem;">
+                        <i class="fas fa-info-circle"></i>
+                        Changing status to completed will notify the user
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" id="cancelStatusUpdate">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check"></i>
+                        Mark as Completed
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        // Initialize stats on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDashboardStats.call({dataset: {type: 'property_tax'}});
+            updateDashboardStats.call({dataset: {type: 'echallan'}});
+        });
+    </script>
+</body>
+</html>

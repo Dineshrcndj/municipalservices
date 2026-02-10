@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Municipal Services Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar container">
+            <a href="{{ url_for('index') }}" class="logo">
+                <i class="fas fa-city"></i>
+                <span>Municipal Services</span>
+            </a>
+        </nav>
+    </header>
+
+    <main class="main-content container">
+        <div class="hero fade-in">
+            <div class="welcome-message">
+                <h1>Welcome to Municipal Services</h1>
+                <p>Select a service below to proceed with your request or payment</p>
+            </div>
+            
+            <div class="service-cards">
+                <a href="{{ url_for('property_tax') }}" class="service-card">
+                    <i class="fas fa-home"></i>
+                    <h3>Property Tax</h3>
+                    <p>Pay your property tax online quickly and securely</p>
+                    <div class="btn btn-primary mt-2">
+                        <span>Continue</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </a>
+                
+                <a href="{{ url_for('echallan') }}" class="service-card">
+                    <i class="fas fa-car"></i>
+                    <h3>EChallan</h3>
+                    <p>Pay traffic challans and check vehicle violations</p>
+                    <div class="btn btn-primary mt-2">
+                        <span>Continue</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

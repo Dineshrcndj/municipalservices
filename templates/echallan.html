@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EChallan - Municipal Services at your Door Step</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar container">
+            <a href="{{ url_for('index') }}" class="logo">
+                <i class="fas fa-city"></i>
+                <span>Municipal Services</span>
+            </a>
+            <a href="{{ url_for('index') }}" class="btn">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Home</span>
+            </a>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% if not submitted %}
+        <div class="form-container fade-in">
+            <div class="form-title">
+                <h1>EChallan Payment</h1>
+                <p>Please provide your vehicle and contact details</p>
+            </div>
+            
+            <form method="POST" action="{{ url_for('echallan') }}">
+                <div class="form-group">
+                    <label for="name">
+                        <i class="fas fa-user"></i>
+                        Full Name
+                    </label>
+                    <input type="text" id="name" name="name" class="form-control" placeholder="Enter your full name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">
+                        <i class="fas fa-phone"></i>
+                        Phone Number
+                    </label>
+                    <input type="tel" id="phone" name="phone" class="form-control" placeholder="Enter your 10-digit mobile number" maxlength="10" required pattern="[0-9]{10}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="vehicle_number">
+                        <i class="fas fa-car"></i>
+                        Vehicle Number
+                    </label>
+                    <input type="text" id="vehicle_number" name="vehicle_number" class="form-control" placeholder="Enter your vehicle registration number" maxlength="10" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Submit Request</span>
+                </button>
+            </form>
+        </div>
+        {% else %}
+        <div class="success-message fade-in">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2>Thank You!</h2>
+            <p>Your EChallan request has been submitted successfully.</p>
+            <div class="record-id">
+                <i class="fas fa-hashtag"></i>
+                <span>Reference ID: {{ unique_id }}</span>
+            </div>
+            <p>Our executive will contact you shortly for further processing.</p>
+            <div class="mt-3">
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-home"></i>
+                    <span>Back to Home</span>
+                </a>
+                <a href="{{ url_for('echallan') }}" class="btn btn-secondary ml-1">
+                    <i class="fas fa-plus"></i>
+                    <span>New Request</span>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
